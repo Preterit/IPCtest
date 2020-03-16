@@ -15,11 +15,17 @@ class Request(
     private val methodName: String,
     private val parameters: Array<Parameters>
 ) : Parcelable {
+    //获得单例对象
+    val GET_INSTANCE = 0
+
+    //执行方法
+    val GET_METHOD = 1
+
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.createTypedArray(Parameters)!!
+        parcel.createTypedArray(Parameters.CREATOR)!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -33,22 +39,14 @@ class Request(
         return 0
     }
 
-    companion object {
-        //获得单例对象
-        const val GET_INSTANCE = 0
+    companion object CREATOR : Parcelable.Creator<Request> {
+        override fun createFromParcel(parcel: Parcel): Request {
+            return Request(parcel)
+        }
 
-        //执行方法
-        const val GET_METHOD = 1
-
-        @JvmStatic
-        val CREATOR = object : Parcelable.Creator<Request> {
-            override fun createFromParcel(parcel: Parcel): Request {
-                return Request(parcel)
-            }
-
-            override fun newArray(size: Int): Array<Request?> {
-                return arrayOfNulls(size)
-            }
+        override fun newArray(size: Int): Array<Request?> {
+            return arrayOfNulls(size)
         }
     }
+
 }

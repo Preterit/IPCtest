@@ -1,3 +1,3 @@
-package com.enjoy.ipc.model;
+package com.study.ipc.model;
 
 parcelable Request;

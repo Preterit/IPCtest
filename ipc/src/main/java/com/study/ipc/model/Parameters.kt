@@ -9,8 +9,8 @@ import android.os.Parcelable
  * Desc:
  */
 class Parameters(
-    private val type: String,  // 参数类型 class
-    private val value: String  // 参数值 json序列化后的字符串
+    val type: String,  // 参数类型 class
+    val value: String  // 参数值 json序列化后的字符串
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,

@@ -36,6 +36,11 @@ class Registry {
     private val mMethods = ConcurrentHashMap<Class<*>, ConcurrentHashMap<String, Method>>()
 
     /**
+     * 类id：实例对象
+     */
+    private val mObjects = ConcurrentHashMap<String, Any>()
+
+    /**
      * 做两张表
      * 1、服务表 Class的标记 ：Class<？>
      * 2、方法表 Class<?> : ["getLocation":Method,"setLocation":Method]
@@ -67,7 +72,10 @@ class Registry {
             if (parameterTypes.isNotEmpty()) {
                 builder.append(parameterTypes[0].name)
             }
-            parameterTypes.forEach { builder.append(",${it.name}") }
+            for (index in 1 until parameterTypes.size) {
+                builder.append(",${parameterTypes[index].name}")
+            }
+
             builder.append(")")
 
             methods[builder.toString()] = method
@@ -88,5 +96,31 @@ class Registry {
                 Log.e(TAG, "" + entry.key)
             }
         }
+    }
+
+    /**
+     * 查找对应的method
+     */
+    fun findMethod(objects: Array<Any?>, methodName: String?, serviceId: String?): Method? {
+        val service = mServices[serviceId]
+        val methods = mMethods[service]
+        val sb = StringBuilder(methodName ?: "")
+        sb.append("(")
+        if (objects.isNotEmpty()) {
+            sb.append(objects[0]?.javaClass?.name)
+            for (i in 1 until objects.size) {
+                sb.append(",${objects[i]?.javaClass?.name}")
+            }
+        }
+        sb.append(")")
+        return methods!![sb.toString()]
+    }
+
+    fun putInstance(serviceId: String?, instance: Any?) {
+        mObjects[serviceId!!] = instance!!
+    }
+
+    fun getInstance(serviceId: String?): Any? {
+        return mObjects[serviceId]
     }
 }

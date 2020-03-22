@@ -9,7 +9,7 @@ import android.os.Parcelable
  * Desc:
  */
 class Response(
-    private val source: String,    // 执行远程方法的返回  JSON 结果
+    private val source: String?,    // 执行远程方法的返回  JSON 结果
     private val isSuccess: Boolean  // 是否成功执行远程方法
 ) : Parcelable {
     constructor(parcel: Parcel) : this(

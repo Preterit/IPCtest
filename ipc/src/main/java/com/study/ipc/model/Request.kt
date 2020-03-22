@@ -10,10 +10,10 @@ import android.os.Parcelable
  * Desc:
  */
 class Request(
-    private val type: Int,
-    private val serviceId: String,
-    private val methodName: String,
-    private val parameters: Array<Parameters>
+    val type: Int,
+    val serviceId: String,
+    val methodName: String,
+    val parameters: Array<Parameters?>
 ) : Parcelable {
     //获得单例对象
     val GET_INSTANCE = 0

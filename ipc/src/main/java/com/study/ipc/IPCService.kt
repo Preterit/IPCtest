@@ -32,7 +32,7 @@ abstract class IPCService : Service() {
 
                 return when (request?.type) {
                     //执行单利方法 静态方法
-                    request?.GET_INSTANCE -> {
+                    Request.GET_INSTANCE -> {
                         var resout: Response? = null
                         try {
                             val instance = method?.invoke(null, *objects)
@@ -46,7 +46,7 @@ abstract class IPCService : Service() {
                     }
 
                     //执行普通方法
-                    request?.GET_METHOD -> {
+                    Request.GET_METHOD -> {
                         val instance = Registry.getInstance().getInstance(serviceId)
                         val invoke = method?.invoke(instance, *objects)
                         Response(gson.toJson(invoke), false)
@@ -64,13 +64,13 @@ abstract class IPCService : Service() {
     /**
      * 反序列化参数
      */
-    fun restoreParameters(parameters: Array<Parameters>?): Array<Any?> {
+    fun restoreParameters(parameters: Array<Parameters?>?): Array<Any?> {
         val objects = arrayOfNulls<Any>(parameters?.size ?: 0)
 
         for (i in parameters!!.indices) {
             val parameter = parameters[i]
             try {
-                objects[i] = gson.fromJson<Any>(parameter.value, Class.forName(parameter.type))
+                objects[i] = gson.fromJson<Any>(parameter?.value, Class.forName(parameter?.type!!))
             } catch (e: Exception) {
                 e.printStackTrace()
             }

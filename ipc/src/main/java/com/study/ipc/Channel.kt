@@ -129,9 +129,9 @@ class Channel {
     fun send(
         type: Int,
         service: Class<out IPCService>,
-        classType: Class<Any>,
-        methodName: String,
-        parameters: Array<Any>
+        classType: Class<*>,
+        methodName: String?,
+        parameters: Array<out Any>?
     ): Response {
         //绑定IPCService 返回的Binder对象
         val iipcService = mBinder[service]
@@ -151,7 +151,7 @@ class Channel {
     }
 
 
-    private fun makeParameter(parameters: Array<Any>?): Array<Parameters?> {
+    private fun makeParameter(parameters: Array<out Any>?): Array<Parameters?> {
         val p = arrayOfNulls<Parameters>(parameters?.size ?: 0)
         if (parameters != null) {
             for ((i, item) in parameters.withIndex()) {

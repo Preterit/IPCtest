@@ -1,6 +1,8 @@
 package com.study.ipc
 
 import android.content.Context
+import com.study.ipc.model.Request
+import java.lang.reflect.Proxy
 
 /**
  * Date:2020/3/15
@@ -40,7 +42,7 @@ class Ipc {
         fun <T> getInstance(
             service: Class<out IPCService>,
             instanceClass: Class<T>,
-            vararg parameters: Any
+            parameters: Array<Any>
         ): T? {
             /**
              * 服务：Location,
@@ -50,17 +52,34 @@ class Ipc {
             return getInstanceWithName(service, instanceClass, "getInstance", parameters)
         }
 
-        private fun <T> getInstanceWithName(
+        fun <T> getInstanceWithName(
             service: Class<out IPCService>,
             instanceClass: Class<T>,
             methodName: String,
-            parameters: Array<out Any>
+            vararg parameters: Any
         ): T? {
-            if (!instanceClass.isInterface){
+            if (!instanceClass.isInterface) {
                 throw IllegalArgumentException("must use interface")
             }
-            //TODO 委婉待续
+            val response = Channel.getInstance()
+                .send(Request.GET_INSTANCE, service, instanceClass, methodName, parameters)
+
+
+            if (response.isSuccess) {
+                //返回一个假的代理对象
+                return getProxy(instanceClass, service)
+            }
             return null
+        }
+
+        private fun <T> getProxy(instanceClass: Class<T>, service: Class<out IPCService>): T? {
+            val classLoader = instanceClass.classLoader
+
+            return Proxy.newProxyInstance(
+                classLoader,
+                arrayOf<Class<*>>(instanceClass),
+                IPCInvocationHandler(instanceClass, service)
+            ) as T
         }
     }
 
